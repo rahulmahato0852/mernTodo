@@ -1,6 +1,7 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
+const path = require("path")
 const cokkieParser = require("cookie-parser")
 const { UserProtected } = require("./middlewares/userProtected")
 require("dotenv").config({ path: "./.env" })
@@ -13,7 +14,7 @@ mongoose.connect(process.env.MONGO)
 
 const app = express()
 
-
+app.use(express.static(path.join(__dirname, "dist")))
 app.use(express.json())
 app.use(cors({
     credentials: true,
@@ -27,7 +28,8 @@ app.use("/api/v1/auth", require("./routes/AuthRoutes"))
 app.use("/api/v1/user", UserProtected, require("./routes/blogRoutes"))
 
 app.use("*", (req, res) => {
-    res.status(404).json({ message: "Resource not found" })
+    res.sendFile(__dirname, "dist", "index.html")
+    // res.status(404).json({ message: "Resource not found" })
 })
 
 
